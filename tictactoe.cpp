@@ -23,39 +23,57 @@ void TicTacToe::Affichage(){
 
 // jeu de l'ordinateur
 int TicTacToe::jeuOrdi(int & bestMove){
-    int score = -2;
-    int bestScore = -2;
-    int bestI = -1;
-    int bestJ = -1;
-    for(int i=0;i<3;i++){
-        for(int j=0;j<3;j++){
-            if(T[i][j]==0){
-                T[i][j]=1;
-                score = arbitre();
-                if(score>bestScore){
-                    bestScore = score;
-                    bestI = i;
-                    bestJ = j;
-                }
-                T[i][j]=0;
+    int arg;
+    if (this->arbitre()!=-2){ // si la partie est finie
+        return 0; 
+    }
+    if (this->arbitre()== 1){ // si l'ordinateur a gagné
+        return 1;
+    }
+    int val = -1;
+    for (int i=0;i<9;i++){
+        if (T[i/3][i%3]==0){
+            play(i, false);
+            intres = this->jeuHumain(arg);
+            unplay(i);
+            if (res > val){
+                val = res;
+                bestMove = i;
             }
         }
     }
-    bestMove = bestI*3+bestJ;
-    return bestScore;
+    return val;
 }
 
 // jeu de l'humain
 int TicTacToe::jeuHumain(int & bestMove){
-    cout << "Entrez le numéro de la case que vous voulez jouer : ";
-    cin >> bestMove;
-    return this->preArbitre(bestMove, -1); // on retourne l'état du jeu après avoir joué
+    int arg;
+    if (this->arbitre()!=-2){ // si la partie est finie
+        return 0; 
+    }
+    if (this->arbitre()== -1){ // si l'humain a gagné
+        return -1;
+    }
+    int val = 1;
+    int res;
+    for (int i=0;i<9;i++){
+        if (T[i/3][i%3]==0){
+            play(i, true);
+            res = this->jeuOrdi(arg);
+            unplay(i);
+            if (res <= val){
+                val = res;
+                bestMove = i;
+            }
+        }
+    }
+    return val;
 }
 
 // arbitrer le jeu
 int TicTacToe::arbitre(){
     int score = 0;
-    for(int i=0;i<3;i++){
+    for(int i=0;i<3;i++){ // vérifier les lignes
         if(T[i][0]==T[i][1] && T[i][1]==T[i][2]){
             if(T[i][0]==1){
                 return 1;
@@ -64,7 +82,7 @@ int TicTacToe::arbitre(){
             }
         }
     }
-    for(int j=0;j<3;j++){
+    for(int j=0;j<3;j++){ // vérifier les colonnes
         if(T[0][j]==T[1][j] && T[1][j]==T[2][j]){
             if(T[0][j]==1){
                 return 1;
@@ -73,21 +91,21 @@ int TicTacToe::arbitre(){
             }
         }
     }
-    if(T[0][0]==T[1][1] && T[1][1]==T[2][2]){
+    if(T[0][0]==T[1][1] && T[1][1]==T[2][2]){ // vérifier les diagonales
         if(T[0][0]==1){
             return 1;
         }else if(T[0][0]==-1){
             return -1;
         }
     }
-    if(T[0][2]==T[1][1] && T[1][1]==T[2][0]){
+    if(T[0][2]==T[1][1] && T[1][1]==T[2][0]){ // vérifier les diagonales
         if(T[0][2]==1){
             return 1;
         }else if(T[0][2]==-1){
             return -1;
         }
     }
-    for(int i=0;i<3;i++){
+    for(int i=0;i<3;i++){ // vérifier si la partie est finie
         for(int j=0;j<3;j++){
             if(T[i][j]==0){
                 score = -2;
@@ -101,9 +119,19 @@ int TicTacToe::arbitre(){
 void TicTacToe::play(int bestMove, bool joueur){
     int i = bestMove/3;
     int j = bestMove%3;
-    if(joueur){
-        T[i][j]=-1;
-    }else{
-        T[i][j]=1;
+    if (T[i][j] == 0){
+        if(joueur){
+            T[i][j]=-1;
+        }else{
+            T[i][j]=1;
+        }
     }
+
+}
+
+// annuler le coup
+void TicTacToe::unplay(int bestMove){
+    int i = bestMove/3;
+    int j = bestMove%3;
+    T[i][j]=0;
 }
