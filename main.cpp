@@ -15,21 +15,22 @@ int main () {
     partie.Affichage();
     while (partie.arbitre() == -2) {
     if (piece == 0) {
-        cout << "C'est à l'ordinateur de jouer !" << endl;
-        partie.jeuOrdi(bestMove);
-        cout << "L'ordinateur joue la case " << bestMove << endl;
+        cout << "C'est à l'ordinateur de jouer ! (symbole : X)" << endl;
         if (partie.arbitre() == -2) {
+            partie.jeuOrdi(bestMove);
             partie.play(bestMove, false);
             partie.Affichage();
             piece = 1; // Passe au tour du joueur
         }
     } else {
-        cout << "C'est à vous de jouer !" << endl;
-        cout << "Entrez le numero de la case que vous voulez jouer : ";
-        cin >> move;
-        partie.play(move, true);
         if (partie.arbitre() == -2) {
-            partie.play(bestMove, true);
+            cout << "C'est à vous de jouer ! (symbole : O)" << endl;
+            cout << "Entrez le numero de la case que vous voulez jouer : ";
+            cin >> move;
+            while (!partie.play(move, true)){
+                cout << "Entrez un numero de case valide : ";
+                cin >> move;
+            }
             partie.Affichage();
             piece = 0; // Passe au tour de l'ordinateur
         }

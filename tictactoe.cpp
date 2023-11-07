@@ -15,16 +15,23 @@ TicTacToe::TicTacToe(){
 void TicTacToe::Affichage(){
     for(int i=0;i<3;i++){
         for(int j=0;j<3;j++){
-            cout<<T[i][j]<<" ";
+            if (T[i][j]==0){
+                cout<<"- ";
+            }else if (T[i][j]==1){
+                cout<<"X ";
+            }else{
+                cout<<"O ";
+            }
         }
         cout<<endl;
     }
+    cout<<endl;
 }
 
 // jeu de l'ordinateur
 int TicTacToe::jeuOrdi(int & bestMove){
     int arg;
-    if (this->arbitre()!=-2){ // si la partie est finie
+    if (this->plein()){ // si la partie est finie
         return 0; 
     }
     if (this->arbitre()== 1){ // si l'ordinateur a gagné
@@ -34,7 +41,7 @@ int TicTacToe::jeuOrdi(int & bestMove){
     for (int i=0;i<9;i++){
         if (T[i/3][i%3]==0){
             play(i, false);
-            intres = this->jeuHumain(arg);
+            int res = this->jeuHumain(arg);
             unplay(i);
             if (res > val){
                 val = res;
@@ -47,8 +54,8 @@ int TicTacToe::jeuOrdi(int & bestMove){
 
 // jeu de l'humain
 int TicTacToe::jeuHumain(int & bestMove){
-    int arg;
-    if (this->arbitre()!=-2){ // si la partie est finie
+    int arg = 0;
+    if (this->plein()){ // si la partie est finie
         return 0; 
     }
     if (this->arbitre()== -1){ // si l'humain a gagné
@@ -61,7 +68,7 @@ int TicTacToe::jeuHumain(int & bestMove){
             play(i, true);
             res = this->jeuOrdi(arg);
             unplay(i);
-            if (res <= val){
+            if (res < val){
                 val = res;
                 bestMove = i;
             }
@@ -116,17 +123,18 @@ int TicTacToe::arbitre(){
 }
 
 // jouer
-void TicTacToe::play(int bestMove, bool joueur){
+bool TicTacToe::play(int bestMove, bool joueur){
     int i = bestMove/3;
     int j = bestMove%3;
-    if (T[i][j] == 0){
+    if (T[i][j] == 0 && i<3 && j<3){
         if(joueur){
             T[i][j]=-1;
         }else{
             T[i][j]=1;
         }
+        return true;
     }
-
+    return false;
 }
 
 // annuler le coup
@@ -134,4 +142,15 @@ void TicTacToe::unplay(int bestMove){
     int i = bestMove/3;
     int j = bestMove%3;
     T[i][j]=0;
+}
+
+bool TicTacToe::plein(){
+    for(int i=0;i<3;i++){
+        for(int j=0;j<3;j++){
+            if(T[i][j]==0){
+                return false;
+            }
+        }
+    }
+    return true;
 }
